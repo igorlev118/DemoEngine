@@ -1,26 +1,28 @@
 #pragma once
 
+#include "NonCopyable.hpp"
+
 /*
     Scope Guard
 
     Executes a set function at the end of object's scope.
-    
+
     Example usage:
         int* array = new int[10];
         auto Cleanup = MakeScopeGuard([&]()
         {
             delete[] array;
         });
-    
+
     Using a scope guard macro:
         int* array = new int[10];
         SCOPE_GUARD(delete[] array);
-    
+
     Using a conditional scope guard macro:
         bool cleanup = true;
         int* array = new int[10];
         SCOPE_GUARD_IF(cleanup, delete[] array);
-    
+
     Using braced scope guard macros:
         int* array = new int[10];
         SCOPE_GUARD_BEGIN();
@@ -29,7 +31,7 @@
             array = nullptr;
         }
         SCOPE_GUARD_END();
-    
+
     Using braced conditonal scope guard macros:
         bool cleanup = true;
         int* array = new int[10];
