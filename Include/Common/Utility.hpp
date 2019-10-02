@@ -22,7 +22,7 @@ namespace Utility
 
     // Gets the size of a static array.
     template<typename Type, size_t Size>
-    size_t ArraySize(const Type(&)[Size])
+    size_t StaticArraySize(const Type(&)[Size])
     {
         return Size;
     }
@@ -36,6 +36,9 @@ namespace Utility
 
     // Gets the directory from a file path.
     std::string GetFileDirectory(std::string filePath);
+
+    // Gets the name from a file path.
+    std::string GetFileName(std::string filePath);
 
     // Gets the extension from a file path.
     std::string GetFileExtension(std::string filePath);
