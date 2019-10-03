@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Common/NonCopyable.hpp"
+
 /*
     System Platform
 
@@ -26,7 +28,7 @@
 namespace System
 {
     // Platform class.
-    class Platform
+    class Platform : private NonCopyable
     {
     public:
         Platform();

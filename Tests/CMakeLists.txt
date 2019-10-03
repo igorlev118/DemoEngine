@@ -18,3 +18,5 @@ endfunction(create_test)
 # Create unit tests.
 create_test("Utilities")
 create_test("ScopeGuard")
+create_test("Events")
+
