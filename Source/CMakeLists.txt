@@ -5,41 +5,60 @@ cmake_minimum_required(VERSION 3.11.2)
 # Source
 #
 
+# Define a function for appending paths to string lists.
+function(append_directory_path path files)
+    set("filesTemp" "")
+
+    foreach("file" ${${files}})
+        list(APPEND "filesTemp" "${path}/${file}")
+    endforeach()
+
+    set(${files} ${filesTemp} PARENT_SCOPE)
+endfunction(append_directory_path)
+
 # Files that take part in the build process.
 set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/Include")
 set(SOURCE_DIR "${PROJECT_SOURCE_DIR}/Source")
 set(PRECOMPILED_HEADER "Precompiled")
 
 set(INCLUDE_FILES
-    "${INCLUDE_DIR}/Engine.hpp"
+    "Engine.hpp"
 
-    "${INCLUDE_DIR}/Common/Build.hpp"
-    "${INCLUDE_DIR}/Common/Debug.hpp"
-    "${INCLUDE_DIR}/Common/NonCopyable.hpp"
-    "${INCLUDE_DIR}/Common/ScopeGuard.hpp"
-    "${INCLUDE_DIR}/Common/Utility.hpp"
+    "Common/Build.hpp"
+    "Common/Debug.hpp"
+    "Common/NonCopyable.hpp"
+    "Common/ScopeGuard.hpp"
+    "Common/Utility.hpp"
 
-    "${INCLUDE_DIR}/Logger/Logger.hpp"
-    "${INCLUDE_DIR}/Logger/Message.hpp"
-    "${INCLUDE_DIR}/Logger/Sink.hpp"
-    "${INCLUDE_DIR}/Logger/Format.hpp"
-    "${INCLUDE_DIR}/Logger/Output.hpp"
+    "Logger/Logger.hpp"
+    "Logger/Message.hpp"
+    "Logger/Sink.hpp"
+    "Logger/Format.hpp"
+    "Logger/Output.hpp"
+
+    "System/Platform.hpp"
 )
+
+append_directory_path(${INCLUDE_DIR} "INCLUDE_FILES")
 
 set(SOURCE_FILES
-    "${SOURCE_DIR}/${PRECOMPILED_HEADER}.hpp"
-    "${SOURCE_DIR}/${PRECOMPILED_HEADER}.cpp"
+    "${PRECOMPILED_HEADER}.hpp"
+    "${PRECOMPILED_HEADER}.cpp"
 
-    "${SOURCE_DIR}/Common/Build.cpp"
-    "${SOURCE_DIR}/Common/Debug.cpp"
-    "${SOURCE_DIR}/Common/Utility.cpp"
+    "Common/Build.cpp"
+    "Common/Debug.cpp"
+    "Common/Utility.cpp"
 
-    "${SOURCE_DIR}/Logger/Logger.cpp"
-    "${SOURCE_DIR}/Logger/Message.cpp"
-    "${SOURCE_DIR}/Logger/Sink.cpp"
-    "${SOURCE_DIR}/Logger/Format.cpp"
-    "${SOURCE_DIR}/Logger/Output.cpp"
+    "Logger/Logger.cpp"
+    "Logger/Message.cpp"
+    "Logger/Sink.cpp"
+    "Logger/Format.cpp"
+    "Logger/Output.cpp"
+
+    "System/Platform.cpp"
 )
+
+append_directory_path(${SOURCE_DIR} "SOURCE_FILES")
 
 # Keep folder structure of include and source files in Visual Studio.
 source_group(TREE ${INCLUDE_DIR} PREFIX "Include Files" FILES ${INCLUDE_FILES})
@@ -113,3 +132,20 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         OBJECT_DEPENDS "${PRECOMPILED_BINARY}"
     )
 endif()
+
+#
+# External
+#
+
+# Add GLFW library.
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "")
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "")
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "")
+set(GLFW_INSTALL OFF CACHE BOOL "")
+
+add_subdirectory("../External/GLFW-3.2.1" "GLFW" EXCLUDE_FROM_ALL)
+include_directories("../External/GLFW-3.2.1/include")
+target_link_libraries("Engine" "glfw")
+
+set_property(TARGET "glfw" PROPERTY PROJECT_LABEL "GLFW")
+set_property(TARGET "glfw" PROPERTY FOLDER "External")
