@@ -11,7 +11,7 @@
     {
         // Definition of a dispatcher that will keep invoking receivers
         // as long as they keep returning true as the result.
-        Dispatcher<bool(void), CollectWhileTrue<bool>> dispatcher;
+        Dispatcher<bool(void), CollectWhileTrue<bool>> dispatcher(defaultResult);
 
         // Returns true if all receivers returned true.
         // Returns false when the first receiver returns false.
@@ -26,6 +26,11 @@ class CollectLast;
 template<typename Type>
 class CollectDefault : public CollectLast<Type>
 {
+public:
+    CollectDefault(Type defaultResult) :
+        CollectLast<Type>(defaultResult)
+    {
+    }
 };
 
 // Default collector specialized for dealing with void return type.
@@ -33,7 +38,15 @@ template<>
 class CollectDefault<void>
 {
 public:
-    bool ConsumeResult(void)
+    CollectDefault(void)
+    {
+    }
+
+    void ConsumeResult(void)
+    {
+    }
+
+    bool ShouldContinue()
     {
         return true;
     }
@@ -48,14 +61,18 @@ template<typename ReturnType>
 class CollectLast
 {
 public:
-    CollectLast(ReturnType initial) :
-        m_result(initial)
+    CollectLast(ReturnType initialResult) :
+        m_result(initialResult)
     {
     }
 
-    bool ConsumeResult(ReturnType result)
+    void ConsumeResult(ReturnType result)
     {
         m_result = result;
+    }
+
+    bool ShouldContinue()
+    {
         return true;
     }
 
@@ -73,18 +90,18 @@ template<typename ReturnType = bool>
 class CollectWhileTrue
 {
 public:
-    CollectWhileTrue() :
-        m_result(true)
+    CollectWhileTrue(ReturnType initialResult) :
+        m_result(initialResult)
     {
     }
 
-    bool ConsumeResult(ReturnType result)
+    void ConsumeResult(ReturnType result)
     {
-        if(result == false)
-        {
-            m_result = result;
-        }
-        
+        m_result = result;
+    }
+
+    bool ShouldContinue()
+    {
         return m_result;
     }
 
@@ -103,18 +120,18 @@ class CollectWhileFalse
 {
 public:
     public:
-    CollectWhileFalse() :
-        m_result(false)
+    CollectWhileFalse(ReturnType initialResult) :
+        m_result(initialResult)
     {
     }
 
-    bool ConsumeResult(ReturnType result)
+    void ConsumeResult(ReturnType result)
     {
-        if(result == true)
-        {
-            m_result = result;
-        }
-            
+        m_result = result;
+    }
+
+    bool ShouldContinue()
+    {
         return !m_result;
     }
 
