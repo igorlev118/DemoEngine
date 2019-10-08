@@ -4,6 +4,7 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/InputLayout.hpp>
 #include <Graphics/Shader.hpp>
+#include <Editor/Editor.hpp>
 
 int main()
 {
@@ -34,6 +35,10 @@ int main()
 
     System::Window window;
     if(!window.Open(windowInfo))
+        return 1;
+
+    Engine::Editor editor;
+    if(!editor.Initialize(&window))
         return 1;
 
     struct Vertex
@@ -80,6 +85,8 @@ int main()
     {
         window.ProcessEvents();
 
+        editor.Update(1.0f / 60.0f);
+
         glClearDepth(1.0f);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -89,6 +96,8 @@ int main()
 
         glBindVertexArray(inputLayout.GetHandle());
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        editor.Draw();
 
         window.Present();
     }

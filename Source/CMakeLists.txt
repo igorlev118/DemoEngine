@@ -62,6 +62,9 @@ set(TARGET_FILES
     "Source/Graphics/InputLayout.cpp"
     "Include/Graphics/Shader.hpp"
     "Source/Graphics/Shader.cpp"
+
+    "Include/Editor/Editor.hpp"
+    "Source/Editor/Editor.cpp"
 )
 
 append_directory_path("${PROJECT_SOURCE_DIR}" "TARGET_FILES")
@@ -171,3 +174,10 @@ target_link_libraries("Engine" "glfw")
 
 set_property(TARGET "glfw" PROPERTY PROJECT_LABEL "GLFW")
 set_property(TARGET "glfw" PROPERTY FOLDER "External")
+
+# Add ImGui library.
+add_subdirectory("../External/ImGui-1.62" "ImGui" EXCLUDE_FROM_ALL)
+target_include_directories("ImGui" PRIVATE "../External/GLEW-2.1.0/include")
+target_link_libraries("Engine" "ImGui")
+
+set_property(TARGET "ImGui" PROPERTY FOLDER "External")
