@@ -28,7 +28,7 @@ public:
 
 bool TestDelegate()
 {
-    Delegate<char(const char* c, int i)> delegate;
+    Common::Delegate<char(const char* c, int i)> delegate;
 
     if(delegate.IsBound())
         return false;
@@ -89,7 +89,7 @@ bool TestDelegate()
 
 bool TestCollector()
 {
-    CollectDefault<void> collectDefault;
+    Common::CollectDefault<void> collectDefault;
 
     collectDefault.ConsumeResult();
 
@@ -98,7 +98,7 @@ bool TestCollector()
 
     collectDefault.GetResult();
 
-    CollectLast<int> collectLast(0);
+    Common::CollectLast<int> collectLast(0);
 
     if(collectLast.GetResult() != 0)
         return false;
@@ -131,7 +131,7 @@ bool TestCollector()
     if(collectLast.GetResult() != 4)
         return false;
 
-    CollectWhileTrue<bool> collectWhileTrue(true);
+    Common::CollectWhileTrue<bool> collectWhileTrue(true);
 
     if(collectWhileTrue.GetResult() != true)
         return false;
@@ -150,7 +150,7 @@ bool TestCollector()
     if(collectWhileTrue.GetResult() != false)
         return false;
 
-    CollectWhileFalse<bool> collectWhileFalse(false);
+    Common::CollectWhileFalse<bool> collectWhileFalse(false);
 
     if(collectWhileFalse.GetResult() != false)
         return false;
@@ -234,13 +234,13 @@ bool TestDispatcher()
     {
         int i = 0;
 
-        Receiver<int(int*)> receiverA;
+        Common::Receiver<int(int*)> receiverA;
         receiverA.Bind<DispatcherClass, &DispatcherClass::FunctionA>(&dispatcherClass);
 
-        Receiver<int(int*)> receiverB;
+        Common::Receiver<int(int*)> receiverB;
         receiverB.Bind<DispatcherClass, &DispatcherClass::FunctionB>(&dispatcherClass);
 
-        Dispatcher<int(int*)> dispatcher(42);
+        Common::Dispatcher<int(int*)> dispatcher(42);
 
         if(dispatcher.Dispatch(&i) != 42)
             return false;
@@ -285,16 +285,16 @@ bool TestDispatcher()
     {
         int i = 0;
 
-        Receiver<bool(int*)> receiverTrue;
+        Common::Receiver<bool(int*)> receiverTrue;
         receiverTrue.Bind<DispatcherClass, &DispatcherClass::FunctionTrue>(&dispatcherClass);
         
-        Receiver<bool(int*)> receiverFalse;
+        Common::Receiver<bool(int*)> receiverFalse;
         receiverFalse.Bind<DispatcherClass, &DispatcherClass::FunctionFalse>(&dispatcherClass);
 
-        Receiver<bool(int*)> receiverDummy;
+        Common::Receiver<bool(int*)> receiverDummy;
         receiverDummy.Bind<DispatcherClass, &DispatcherClass::FunctionDummy>(&dispatcherClass);
 
-        Dispatcher<bool(int*), CollectWhileTrue<>> dispatcherWhileTrue(true);
+        Common::Dispatcher<bool(int*), Common::CollectWhileTrue<>> dispatcherWhileTrue(true);
 
         if(dispatcherWhileTrue.Dispatch(&i) != true)
             return false;
@@ -328,7 +328,7 @@ bool TestDispatcher()
 
         int y = 0;
 
-        Dispatcher<bool(int*), CollectWhileFalse<>> dispatcherWhileFalse(false);
+        Common::Dispatcher<bool(int*), Common::CollectWhileFalse<>> dispatcherWhileFalse(false);
 
         if(dispatcherWhileFalse.Dispatch(&y) != false)
             return false;
@@ -365,13 +365,13 @@ bool TestDispatcher()
     {
         int i = 0;
 
-        Receiver<bool(int*)> receiverTrue;
+        Common::Receiver<bool(int*)> receiverTrue;
         receiverTrue.Bind<DispatcherClass, &DispatcherClass::FunctionTrue>(&dispatcherClass);
 
-        Receiver<bool(int*)> receiverFalse;
+        Common::Receiver<bool(int*)> receiverFalse;
         receiverFalse.Bind<DispatcherClass, &DispatcherClass::FunctionFalse>(&dispatcherClass);
 
-        Dispatcher<bool(int*), CollectWhileTrue<>> dispatcherWhileTrue(false);
+        Common::Dispatcher<bool(int*), Common::CollectWhileTrue<>> dispatcherWhileTrue(false);
 
         if(dispatcherWhileTrue.Dispatch(&i) != false)
             return false;
@@ -387,7 +387,7 @@ bool TestDispatcher()
         if(i != 0)
             return false;
 
-        Dispatcher<bool(int*), CollectWhileFalse<>> dispatcherWhileFalse(true);
+        Common::Dispatcher<bool(int*), Common::CollectWhileFalse<>> dispatcherWhileFalse(true);
 
         if(dispatcherWhileFalse.Dispatch(&i) != true)
             return false;
@@ -410,20 +410,20 @@ bool TestDispatcher()
 
         DispatcherClass dispatcherClass;
 
-        Receiver<void(int*)> receiverAddOne;
+        Common::Receiver<void(int*)> receiverAddOne;
         receiverAddOne.Bind<DispatcherClass, &DispatcherClass::FunctionAddOne>(&dispatcherClass);
 
-        Receiver<void(int*)> receiverAddTwo;
+        Common::Receiver<void(int*)> receiverAddTwo;
         receiverAddTwo.Bind<DispatcherClass, &DispatcherClass::FunctionAddTwo>(&dispatcherClass);
 
-        Receiver<void(int*)> receiverAddThree;
+        Common::Receiver<void(int*)> receiverAddThree;
         receiverAddThree.Bind<DispatcherClass, &DispatcherClass::FunctionAddThree>(&dispatcherClass);
 
-        Receiver<void(int*)> receiverAddFour;
+        Common::Receiver<void(int*)> receiverAddFour;
         receiverAddFour.Bind<DispatcherClass, &DispatcherClass::FunctionAddFour>(&dispatcherClass);
 
-        Dispatcher<void(int*)> dispatcherA;
-        Dispatcher<void(int*)> dispatcherB;
+        Common::Dispatcher<void(int*)> dispatcherA;
+        Common::Dispatcher<void(int*)> dispatcherB;
 
         dispatcherA.Subscribe(receiverAddOne);
         dispatcherA.Subscribe(receiverAddTwo);

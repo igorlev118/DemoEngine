@@ -122,7 +122,7 @@ namespace System
                 int y;
             };
 
-            Dispatcher<void(const Move&)> move;
+            Common::Dispatcher<void(const Move&)> move;
 
             // Resize event.
             struct Resize
@@ -131,7 +131,7 @@ namespace System
                 int height;
             };
 
-            Dispatcher<void(const Resize&)> resize;
+            Common::Dispatcher<void(const Resize&)> resize;
 
             // Focus event.
             struct Focus
@@ -139,14 +139,14 @@ namespace System
                 bool focused;
             };
 
-            Dispatcher<void(const Focus&)> focus;
+            Common::Dispatcher<void(const Focus&)> focus;
 
             // Close event.
             struct Close
             {
             };
 
-            Dispatcher<void(const Close&)> close;
+            Common::Dispatcher<void(const Close&)> close;
 
             // Keyboard key event.
             struct KeyboardKey
@@ -157,7 +157,7 @@ namespace System
                 int mods;
             };
 
-            Dispatcher<void(const KeyboardKey&)> keyboardKey;
+            Common::Dispatcher<void(const KeyboardKey&)> keyboardKey;
 
             // Text input event.
             struct TextInput
@@ -165,7 +165,7 @@ namespace System
                 unsigned int character;
             };
 
-            Dispatcher<void(const TextInput&)> textInput;
+            Common::Dispatcher<void(const TextInput&)> textInput;
 
             // Mouse button event.
             struct MouseButton
@@ -175,7 +175,7 @@ namespace System
                 int mods;
             };
 
-            Dispatcher<void(const MouseButton&)> mouseButton;
+            Common::Dispatcher<void(const MouseButton&)> mouseButton;
 
             // Mouse scroll event.
             struct MouseScroll
@@ -183,7 +183,7 @@ namespace System
                 double offset;
             };
 
-            Dispatcher<void(const MouseScroll&)> mouseScroll;
+            Common::Dispatcher<void(const MouseScroll&)> mouseScroll;
 
             // Cursor position event.
             struct CursorPosition
@@ -192,7 +192,7 @@ namespace System
                 double y;
             };
 
-            Dispatcher<void(const CursorPosition&)> cursorPosition;
+            Common::Dispatcher<void(const CursorPosition&)> cursorPosition;
 
             // Cursor enter event.
             struct CursorEnter
@@ -200,7 +200,7 @@ namespace System
                 bool entered;
             };
 
-            Dispatcher<void(const CursorEnter&)> cursorEnter;
+            Common::Dispatcher<void(const CursorEnter&)> cursorEnter;
         } events;
 
     private:
