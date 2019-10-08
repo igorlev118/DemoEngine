@@ -1,18 +1,14 @@
 #pragma once
+
 // Standard
-#include <cctype>
-#include <ctime>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
 
 // Windows
 #ifdef WIN32
-#define WIN32_LEAD_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
+    #define WIN32_LEAD_AND_MEAN
+    #define NOMINMAX
+    #include <windows.h>
 #endif
 
 // GLM
@@ -37,4 +33,3 @@
 #include "Common/Utility.hpp"
 #include "Events/Delegate.hpp"
 #include "Logger/Logger.hpp"
-
