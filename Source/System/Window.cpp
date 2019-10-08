@@ -110,18 +110,16 @@ bool Window::Open(const WindowInfo& info)
     glfwSwapInterval((int)info.vsync);
 
     // Initialize GLEW library for the current context.
-    /*
     GLenum error = glewInit();
 
     if(error != GLEW_OK)
     {
-        LogError() << "GLEW Error: " << glewGetErrorString(error);
-        LogError() << "Could not initialize GLEW library!";
+        LOG_ERROR() << "GLEW Error: " << glewGetErrorString(error);
+        LOG_ERROR() << "Could not initialize GLEW library!";
         return false;
     }
 
     ASSERT(glGetError() == GL_NO_ERROR, "OpenGL error occurred during context initialization!");
-    */
 
     // Log created window info.
     int windowWidth, windowHeight;
@@ -179,7 +177,6 @@ void Window::Present()
     glfwSwapBuffers(m_window);
 
     // Check if there are any uncaught OpenGL errors.
-    /*
     GLenum error;
     while((error = glGetError()) != GL_NO_ERROR)
     {
@@ -188,7 +185,6 @@ void Window::Present()
 
         LOG_WARNING() << "Found uncaught OpenGL error in the last frame (code 0x" << stream.str() << ")!";
     }
-    */
 }
 
 void Window::Close()
