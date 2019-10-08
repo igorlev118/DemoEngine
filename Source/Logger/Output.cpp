@@ -64,7 +64,7 @@ ConsoleOutput::ConsoleOutput()
 ConsoleOutput::~ConsoleOutput()
 {
     // Write session end.
-    std::cout << DefaultFormat::ComposeSessionStart();
+    std::cout << DefaultFormat::ComposeSessionEnd();
 }
 
 void ConsoleOutput::Write(const Message& message, const SinkContext& context)
