@@ -55,6 +55,8 @@ set(TARGET_FILES
     "Source/System/Platform.cpp"
     "Include/System/Window.hpp"
     "Source/System/Window.cpp"
+    "Include/System/Timer.hpp"
+    "Source/System/Timer.cpp"
 
     "Include/Graphics/Buffer.hpp"
     "Source/Graphics/Buffer.cpp"
