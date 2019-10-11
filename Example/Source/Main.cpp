@@ -91,7 +91,7 @@ int main()
         return 1;
 
     Graphics::Texture texture;
-    if(!texture.Load(Build::GetMountDir() + "Data/Textures/Checker.png"))
+    if(!texture.Load(Build::GetWorkingDir() + "Data/Textures/Checker.png"))
         return 1;
 
     Graphics::Sampler sampler;
@@ -99,7 +99,7 @@ int main()
         return -1;
 
     Graphics::Shader shader;
-    if(!shader.Load(Build::GetMountDir() + "Data/Shaders/Textured.shader"))
+    if(!shader.Load(Build::GetWorkingDir() + "Data/Shaders/Textured.shader"))
         return 1;
 
     timer.Reset();
