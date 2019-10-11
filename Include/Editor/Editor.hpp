@@ -3,6 +3,7 @@
 #include "Common/NonCopyable.hpp"
 #include "Events/Receiver.hpp"
 #include "System/Window.hpp"
+#include "Graphics/Context.hpp"
 #include "Graphics/Buffer.hpp"
 #include "Graphics/InputLayout.hpp"
 #include "Graphics/Texture.hpp"
@@ -19,7 +20,7 @@ namespace Engine
     class Editor : private NonCopyable
     {
     public:
-        Editor();
+        Editor(Graphics::Context* graphics);
         ~Editor();
 
         // Initializes the editor system.
@@ -52,8 +53,11 @@ namespace Engine
         void DestroyContext();
 
     private:
+        // Graphics context.
+        Graphics::Context* m_graphics;
+
         // User interface context.
-        ImGuiContext* m_context;
+        ImGuiContext* m_interface;
 
         // Window reference.
         System::Window* m_window;

@@ -30,7 +30,7 @@
         bufferInfo.data = &vertices[0];
         
         // Create a vertex buffer.
-        Graphics::VertexBuffer vertexBuffer;
+        Graphics::VertexBuffer vertexBuffer(&graphics);
         vertexBuffer.Create(bufferInfo);
 
         // Retrieve an OpenGL handle.
@@ -40,6 +40,9 @@
 
 namespace Graphics
 {
+    // Forward declarations.
+    class Context;
+
     // Buffer info structure.
     struct BufferInfo
     {
@@ -55,7 +58,7 @@ namespace Graphics
     class Buffer
     {
     protected:
-        Buffer(GLenum type);
+        Buffer(Context* context, GLenum type);
         virtual ~Buffer();
 
     public:
@@ -94,6 +97,9 @@ namespace Graphics
         void DestroyHandle();
 
     protected:
+        // Graphics context.
+        Context* m_context;
+
         // Buffer handle.
         GLenum m_type;
         GLenum m_usage;
@@ -114,7 +120,7 @@ namespace Graphics
     class VertexBuffer : public Buffer
     {
     public:
-        VertexBuffer();
+        VertexBuffer(Context* context);
 
         // Returns the buffer's name.
         const char* GetName() const override;
@@ -130,7 +136,7 @@ namespace Graphics
     class IndexBuffer : public Buffer
     {
     public:
-        IndexBuffer();
+        IndexBuffer(Context* context);
 
         // Gets the type of index indices.
         GLenum GetElementType() const override;
@@ -149,7 +155,7 @@ namespace Graphics
     class InstanceBuffer : public Buffer
     {
     public:
-        InstanceBuffer();
+        InstanceBuffer(Context* context);
 
         // Returns the buffer's name.
         const char* GetName() const override;

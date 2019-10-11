@@ -19,11 +19,16 @@ namespace
     }
 }
 
-Editor::Editor() :
-    m_context(nullptr),
+Editor::Editor(Graphics::Context* graphics) :
+    m_graphics(graphics),
+    m_vertexBuffer(graphics),
+    m_indexBuffer(graphics),
+    m_interface(nullptr),
     m_window(nullptr),
     m_initialized(false)
 {
+    VERIFY(graphics && graphics->IsValid(), "Graphics context is invalid!");
+
     // Bind event receivers.
     m_receiverCursorPosition.Bind<Editor, &Editor::CursorPositionCallback>(this);
     m_receiverMouseButton.Bind<Editor, &Editor::MouseButtonCallback>(this);
@@ -39,14 +44,11 @@ Editor::~Editor()
 
 void Editor::DestroyContext()
 {
-    // Shutdown the rendering implementation.
-    ImGui_ImplOpenGL3_Shutdown();
-
     // Destroy the user interface context.
-    if(m_context)
+    if(m_interface)
     {
-        ImGui::DestroyContext(m_context);
-        m_context = nullptr;
+        ImGui::DestroyContext(m_interface);
+        m_interface = nullptr;
     }
 }
 
@@ -57,14 +59,13 @@ bool Editor::Initialize(System::Window* window)
     // Check if the instance is already initialized.
     VERIFY(!m_initialized, "Editor instance is already initialized!");
 
-    // Check if the provided argument is valid.
-    VERIFY(window != nullptr, "Invalid argument - \"window\" is nullptr!");
+    // Check if the provided arguments are valid.
+    VERIFY(window && window->IsValid(), "Invalid argument - \"window\" is invalid!");
 
     // Create the user interface context.
-    IMGUI_CHECKVERSION();
-    
-    m_context = ImGui::CreateContext();
-    if(m_context == nullptr)
+    m_interface = ImGui::CreateContext();
+
+    if(m_interface == nullptr)
     {
         LOG_ERROR() << "Failed to initialize the user interface context!";
         return false;
@@ -136,7 +137,7 @@ bool Editor::Initialize(System::Window* window)
     if(!m_vertexBuffer.Create(vertexBufferInfo))
         return false;
 
-    SCOPE_GUARD_IF(!m_initialized, m_vertexBuffer = Graphics::VertexBuffer());
+    SCOPE_GUARD_IF(!m_initialized, m_vertexBuffer = Graphics::VertexBuffer(m_graphics));
 
     // Create an index buffer.
     Graphics::BufferInfo indexBufferInfo;
@@ -146,7 +147,7 @@ bool Editor::Initialize(System::Window* window)
     if(!m_indexBuffer.Create(indexBufferInfo))
         return false;
 
-    SCOPE_GUARD_IF(!m_initialized, m_indexBuffer = Graphics::IndexBuffer());
+    SCOPE_GUARD_IF(!m_initialized, m_indexBuffer = Graphics::IndexBuffer(m_graphics));
 
     // Create an input layout.
     const Graphics::InputAttribute inputAttributes[] =
@@ -203,7 +204,7 @@ bool Editor::Initialize(System::Window* window)
 void Editor::Update(float deltaTime)
 {
     // Set context as current.
-    ImGui::SetCurrentContext(m_context);
+    ImGui::SetCurrentContext(m_interface);
     ImGuiIO& io = ImGui::GetIO();
 
     // Set current delta time.
@@ -224,7 +225,7 @@ void Editor::Update(float deltaTime)
 void Editor::Draw()
 {
     // Set context as current.
-    ImGui::SetCurrentContext(m_context);
+    ImGui::SetCurrentContext(m_interface);
     ImGuiIO& io = ImGui::GetIO();
 
     // End our interface frame.
@@ -296,7 +297,7 @@ void Editor::Draw()
 void Editor::CursorPositionCallback(const System::Window::Events::CursorPosition& event)
 {
     // Set context as current.
-    ImGui::SetCurrentContext(m_context);
+    ImGui::SetCurrentContext(m_interface);
     ImGuiIO& io = ImGui::GetIO();
 
     // Set cursor position.
@@ -307,7 +308,7 @@ void Editor::CursorPositionCallback(const System::Window::Events::CursorPosition
 void Editor::MouseButtonCallback(const System::Window::Events::MouseButton& event)
 {
     // Set context as current.
-    ImGui::SetCurrentContext(m_context);
+    ImGui::SetCurrentContext(m_interface);
     ImGuiIO& io = ImGui::GetIO();
 
     // Make sure that the array is of an expected size.
@@ -325,7 +326,7 @@ void Editor::MouseButtonCallback(const System::Window::Events::MouseButton& even
 void Editor::MouseScrollCallback(const System::Window::Events::MouseScroll& event)
 {
     // Set context as current.
-    ImGui::SetCurrentContext(m_context);
+    ImGui::SetCurrentContext(m_interface);
     ImGuiIO& io = ImGui::GetIO();
 
     // Set mouse wheel offset.
@@ -335,7 +336,7 @@ void Editor::MouseScrollCallback(const System::Window::Events::MouseScroll& even
 void Editor::KeyboardKeyCallback(const System::Window::Events::KeyboardKey& event)
 {
     // Set context as current.
-    ImGui::SetCurrentContext(m_context);
+    ImGui::SetCurrentContext(m_interface);
     ImGuiIO& io = ImGui::GetIO();
 
     // Make sure that the array is of an expected size.
@@ -359,7 +360,7 @@ void Editor::KeyboardKeyCallback(const System::Window::Events::KeyboardKey& even
 void Editor::TextInputCallback(const System::Window::Events::TextInput& event)
 {
     // Set context as current.
-    ImGui::SetCurrentContext(m_context);
+    ImGui::SetCurrentContext(m_interface);
     ImGuiIO& io = ImGui::GetIO();
 
     // Add text input character.
