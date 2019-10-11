@@ -6,6 +6,7 @@
 #include <Graphics/Buffer.hpp>
 #include <Graphics/InputLayout.hpp>
 #include <Graphics/Texture.hpp>
+#include <Graphics/Sampler.hpp>
 #include <Graphics/Shader.hpp>
 #include <Editor/Editor.hpp>
 
@@ -31,6 +32,7 @@ int main()
         return 1;
 
     System::WindowInfo windowInfo;
+    windowInfo.title = "Engine Example";
     windowInfo.width = 1024;
     windowInfo.height = 576;
     windowInfo.vsync = false;
@@ -92,6 +94,10 @@ int main()
     if(!texture.Load(Build::GetMountDir() + "Data/Textures/Checker.png"))
         return 1;
 
+    Graphics::Sampler sampler;
+    if(!sampler.Create())
+        return -1;
+
     Graphics::Shader shader;
     if(!shader.Load(Build::GetMountDir() + "Data/Shaders/Textured.shader"))
         return 1;
@@ -121,6 +127,7 @@ int main()
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.GetHandle());
+        glBindSampler(0, sampler.GetHandle());
         glUniform1i(shader.GetUniform("textureDiffuse"), 0);
 
         glBindVertexArray(inputLayout.GetHandle());
