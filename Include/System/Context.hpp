@@ -3,7 +3,7 @@
 #include "Common/NonCopyable.hpp"
 
 /*
-    System Platform
+    System Context
 
     Main platform context that must be initialized
     first before other system classes can be used.
@@ -14,9 +14,9 @@
 
     void ExmapleSystemPlatform()
     {
-        // Initialize the platform instance.
-        System::Platform platform;
-        if(!platform.Initialize())
+        // Initialize the system instance.
+        System::Context system;
+        if(!system.Initialize())
             return;
 
         // Now all system classes can be used.
@@ -27,14 +27,14 @@
 
 namespace System
 {
-    // Platform class.
-    class Platform : private NonCopyable
+    // Context class.
+    class Context : private NonCopyable
     {
     public:
-        Platform();
-        ~Platform();
+        Context();
+        ~Context();
 
-        // Initializes the platform context.
+        // Initializes the system context.
         bool Initialize();
 
         // Checks if the instance is initialized.

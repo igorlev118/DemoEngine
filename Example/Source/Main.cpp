@@ -1,5 +1,5 @@
 #include <Engine.hpp>
-#include <System/Platform.hpp>
+#include <System/Context.hpp>
 #include <System/Window.hpp>
 #include <System/Timer.hpp>
 #include <Graphics/ScreenSpace.hpp>
@@ -12,6 +12,7 @@
 
 int main()
 {
+    // Initialize low level systems.
     Build::Initialize();
     Debug::Initialize();
     Logger::Initialize();
@@ -27,10 +28,12 @@ int main()
         LOG() << "Branch name: " << Build::GetBranchName();
     }
 
-    System::Platform platform;
-    if(!platform.Initialize())
+    // Initialize the system context.
+    System::Context system;
+    if(!system.Initialize())
         return 1;
 
+    // Open a window.
     System::WindowInfo windowInfo;
     windowInfo.title = "Engine Example";
     windowInfo.width = 1024;
@@ -42,6 +45,7 @@ int main()
     if(!window.Open(windowInfo))
         return 1;
 
+    // Create a timer.
     System::Timer timer;
 
     Engine::Editor editor;

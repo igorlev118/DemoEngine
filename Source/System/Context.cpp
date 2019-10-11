@@ -1,5 +1,5 @@
 #include "Precompiled.hpp"
-#include "System/Platform.hpp"
+#include "System/Context.hpp"
 using namespace System;
 
 namespace
@@ -11,12 +11,12 @@ namespace
     }
 }
 
-Platform::Platform() :
+Context::Context() :
     m_initialized(false)
 {
 }
 
-Platform::~Platform()
+Context::~Context()
 {
     // Release GLFW library.
     if(m_initialized)
@@ -25,12 +25,12 @@ Platform::~Platform()
     }
 }
 
-bool Platform::Initialize()
+bool Context::Initialize()
 {
-    LOG() << "Initializing platform..." << LOG_INDENT();
+    LOG() << "Initializing system context..." << LOG_INDENT();
 
-    // Check if system platform is already initialized.
-    ASSERT(!m_initialized, "Platform is already initialized!");
+    // Check if system context is already initialized.
+    ASSERT(!m_initialized, "Context is already initialized!");
 
     // Set a callback function for future GLFW errors.
     glfwSetErrorCallback(ErrorCallback);
@@ -54,7 +54,7 @@ bool Platform::Initialize()
     return m_initialized = true;
 }
 
-bool Platform::IsInitialized() const
+bool Context::IsInitialized() const
 {
     return m_initialized;
 }
