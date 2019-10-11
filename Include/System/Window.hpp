@@ -108,6 +108,9 @@ namespace System
         // Checks if the window is focused.
         bool IsFocused() const;
 
+        // Checks if the window is valid.
+        bool IsValid() const;
+
         // Gets the window's private handle.
         GLFWwindow* GetPrivateHandle();
 
@@ -240,7 +243,7 @@ namespace System
 
     private:
         // Window handle.
-        GLFWwindow* m_window;
+        GLFWwindow* m_handle;
 
         // Window title.
         std::string m_title;
