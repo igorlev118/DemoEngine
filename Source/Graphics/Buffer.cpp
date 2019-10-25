@@ -3,13 +3,6 @@
 #include "Graphics/Context.hpp"
 using namespace Graphics;
 
-namespace
-{
-    // Constant definitions.
-    const GLuint InvalidHandle = 0;
-    const GLenum InvalidEnum = 0;
-}
-
 /*
     Buffer
 */
@@ -25,8 +18,8 @@ BufferInfo::BufferInfo() :
 Buffer::Buffer(Context* context, GLenum type) :
     m_context(context),
     m_type(type),
-    m_usage(GL_INVALID_ENUM),
-    m_handle(InvalidHandle),
+    m_usage(OpenGL::InvalidEnum),
+    m_handle(OpenGL::InvalidHandle),
     m_elementSize(0),
     m_elementCount(0)
 {
@@ -41,10 +34,10 @@ Buffer::~Buffer()
 void Buffer::DestroyHandle()
 {
     // Release the buffer's handle.
-    if(m_handle != InvalidHandle)
+    if(m_handle != OpenGL::InvalidHandle)
     {
         glDeleteBuffers(1, &m_handle);
-        m_handle = InvalidHandle;
+        m_handle = OpenGL::InvalidHandle;
     }
 }
 
@@ -53,7 +46,7 @@ bool Buffer::Create(const BufferInfo& info)
     LOG() << "Creating " << this->GetName() << "..." << LOG_INDENT();
 
     // Check if the handle has been already created.
-    VERIFY(m_handle == InvalidHandle, "Buffer instance has been already initialized!");
+    VERIFY(m_handle == OpenGL::InvalidHandle, "Buffer instance has been already initialized!");
 
     // Validate that element size is not zero.
     // Element count can be zero for uninitialized buffers.
@@ -71,7 +64,7 @@ bool Buffer::Create(const BufferInfo& info)
     
     glGenBuffers(1, &m_handle);
 
-    if(m_handle == InvalidHandle)
+    if(m_handle == OpenGL::InvalidHandle)
     {
         LOG_ERROR() << "Could not create a buffer handle!";
         return false;
@@ -102,7 +95,7 @@ bool Buffer::Create(const BufferInfo& info)
 
 void Buffer::Update(const void* data, int elementCount)
 {
-    VERIFY(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    VERIFY(m_handle != OpenGL::InvalidHandle, "Buffer handle has not been created!");
     VERIFY(data != nullptr, "Invalid argument - \"data\" is null!");
     VERIFY(elementCount > 0, "Invalid argument - \"elementCount\" is invalid!");
 
@@ -117,37 +110,37 @@ void Buffer::Update(const void* data, int elementCount)
 
 GLenum Buffer::GetType() const
 {
-    ASSERT(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Buffer handle has not been created!");
 
     return m_type;
 }
 
 GLuint Buffer::GetHandle() const
 {
-    ASSERT(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Buffer handle has not been created!");
 
     return m_handle;
 }
 
 unsigned int Buffer::GetElementSize() const
 {
-    ASSERT(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Buffer handle has not been created!");
 
     return m_elementSize;
 }
 
 unsigned int Buffer::GetElementCount() const
 {
-    ASSERT(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Buffer handle has not been created!");
 
     return m_elementCount;
 }
 
 GLenum Buffer::GetElementType() const
 {
-    ASSERT(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Buffer handle has not been created!");
 
-    return GL_INVALID_ENUM;
+    return OpenGL::InvalidEnum;
 }
 
 bool Buffer::IsValid() const
@@ -190,7 +183,7 @@ const char* IndexBuffer::GetName() const
 
 GLenum IndexBuffer::GetElementType() const
 {
-    ASSERT(m_handle != InvalidHandle, "Buffer handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Buffer handle has not been created!");
 
     if(m_type == GL_ELEMENT_ARRAY_BUFFER)
     {
@@ -202,7 +195,7 @@ GLenum IndexBuffer::GetElementType() const
         }
     }
 
-    return InvalidEnum;
+    return GL_INVALID_ENUM;
 }
 
 /*
