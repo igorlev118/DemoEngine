@@ -3,7 +3,7 @@
 #include <tuple>
 
 /*
-    Graphics State
+    Graphics Render state
 */
 
 namespace Graphics
@@ -81,11 +81,11 @@ namespace Graphics
         const int PixelStoreParameterCount = Utility::StaticArraySize(PixelStoreParameters);
     }
 
-    // State structure.
-    class State
+    // Render state structure.
+    class RenderState
     {
     public:
-        State();
+        RenderState();
 
         GLuint GetBindVertexArray() const;
         GLuint GetBindBuffer(GLenum target) const;

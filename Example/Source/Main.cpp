@@ -2,7 +2,7 @@
 #include <System/Platform.hpp>
 #include <System/Window.hpp>
 #include <System/Timer.hpp>
-#include <Graphics/Context.hpp>
+#include <Graphics/RenderContext.hpp>
 #include <Graphics/ScreenSpace.hpp>
 #include <Graphics/Buffer.hpp>
 #include <Graphics/VertexArray.hpp>
@@ -52,7 +52,7 @@ int main()
     System::Timer timer;
 
     // Create the graphics context.
-    Graphics::Context graphics;
+    Graphics::RenderContext graphics;
     if(!graphics.Initialize(&window))
         return 1;
 

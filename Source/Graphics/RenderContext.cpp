@@ -1,25 +1,25 @@
 #include "Precompiled.hpp"
-#include "Graphics/Context.hpp"
+#include "Graphics/RenderContext.hpp"
 #include "System/Window.hpp"
 using namespace Graphics;
 
-Context::Context() :
+RenderContext::RenderContext() :
     m_window(nullptr),
     m_initialized(false)
 {
 }
 
-Context::~Context()
+RenderContext::~RenderContext()
 {
 }
 
-bool Context::Initialize(System::Window* window)
+bool RenderContext::Initialize(System::Window* window)
 {
     // Make selected window's OpenGL context current.
     window->MakeContextCurrent();
 
     // We need the initial state.
-    m_states.push_back(State());
+    m_states.push_back(RenderState());
 
     SCOPE_GUARD_IF(!m_initialized, Utility::ClearContainer(m_states));
 
@@ -32,21 +32,21 @@ bool Context::Initialize(System::Window* window)
     return m_initialized = true;
 }
 
-void Context::MakeCurrent()
+void RenderContext::MakeCurrent()
 {
     VERIFY(m_window != nullptr, "Window instance is null!");
 
     m_window->MakeContextCurrent();
 }
 
-const State& Context::GetState() const
+const RenderState& RenderContext::GetState() const
 {
     VERIFY(!m_states.empty(), "Array of render states is empty!");
 
     return m_states.back();
 }
 
-bool Context::IsValid() const
+bool RenderContext::IsValid() const
 {
     return m_initialized;
 }

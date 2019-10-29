@@ -1,8 +1,8 @@
 #include "Precompiled.hpp"
-#include "Graphics/State.hpp"
+#include "Graphics/RenderState.hpp"
 using namespace Graphics;
 
-State::State()
+RenderState::RenderState()
 {
     // glBindVertexArray
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&m_bindVertexArray);
@@ -37,12 +37,12 @@ State::State()
     }
 }
 
-GLuint State::GetBindVertexArray() const
+GLuint RenderState::GetBindVertexArray() const
 {
     return m_bindVertexArray;
 }
 
-GLuint State::GetBindBuffer(GLenum target) const
+GLuint RenderState::GetBindBuffer(GLenum target) const
 {
     VERIFY(target != GL_INVALID_ENUM, "Unsupported buffer binding target!");
 
@@ -55,7 +55,7 @@ GLuint State::GetBindBuffer(GLenum target) const
     return m_bindBuffer[0];
 }
 
-GLuint State::GetBindTexture(GLenum target) const
+GLuint RenderState::GetBindTexture(GLenum target) const
 {
     VERIFY(target != GL_INVALID_ENUM, "Unsupported texture binding target!");
 
@@ -68,7 +68,7 @@ GLuint State::GetBindTexture(GLenum target) const
     return m_bindTexture[0];
 }
 
-GLint State::GetPixelStore(GLenum parameter) const
+GLint RenderState::GetPixelStore(GLenum parameter) const
 {
     VERIFY(parameter != GL_INVALID_ENUM, "Unsupported pixel store parameter!");
 

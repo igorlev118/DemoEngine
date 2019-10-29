@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/State.hpp"
+#include "Graphics/RenderState.hpp"
 
 namespace System
 {
@@ -8,17 +8,17 @@ namespace System
 }
 
 /*
-    Graphics Context
+    Graphics Render Context
 */
 
 namespace Graphics
 {
-    // Context class.
-    class Context
+    // Render context class.
+    class RenderContext
     {
     public:
-        Context();
-        ~Context();
+        RenderContext();
+        ~RenderContext();
 
         // Initialize the graphics context.
         bool Initialize(System::Window* window);
@@ -33,7 +33,7 @@ namespace Graphics
         void PopState();
 
         // Gets the current state on top of the stack.
-        const State& GetState() const;
+        const RenderState& GetState() const;
 
         // Checks if the instance is valid.
         bool IsValid() const;
@@ -43,7 +43,7 @@ namespace Graphics
         System::Window* m_window;
 
         // Stack of states.
-        std::vector<State> m_states;
+        std::vector<RenderState> m_states;
 
         // Initialization state.
         bool m_initialized;
