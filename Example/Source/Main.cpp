@@ -54,7 +54,7 @@ int main()
     // Create the graphics context.
     Graphics::Context graphics;
     if(!graphics.Initialize(&window))
-        return -1;
+        return 1;
 
     // Create the rendering screen space.
     Graphics::ScreenSpace screenSpace;
@@ -101,10 +101,12 @@ int main()
     if(!vertexArray.Create(inputLayoutInfo))
         return 1;
 
-    Graphics::Texture texture;
+    // Load a texture.
+    Graphics::Texture texture(&graphics);
     if(!texture.Load(Build::GetWorkingDir() + "Data/Textures/Checker.png"))
         return 1;
 
+    //
     Graphics::Sampler sampler;
     if(!sampler.Create())
         return -1;
