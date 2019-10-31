@@ -16,14 +16,14 @@ BufferInfo::BufferInfo() :
 }
 
 Buffer::Buffer(RenderContext* context, GLenum type) :
-    m_context(context),
+    m_renderContext(context),
     m_type(type),
     m_usage(OpenGL::InvalidEnum),
     m_handle(OpenGL::InvalidHandle),
     m_elementSize(0),
     m_elementCount(0)
 {
-    VERIFY(m_context && m_context->IsValid(), "Graphics context is invalid!");
+    VERIFY(m_renderContext && m_renderContext->IsValid(), "Render context is invalid!");
 }
 
 Buffer::~Buffer()
@@ -37,6 +37,8 @@ void Buffer::DestroyHandle()
     if(m_handle != OpenGL::InvalidHandle)
     {
         glDeleteBuffers(1, &m_handle);
+        OpenGL::CheckErrors();
+
         m_handle = OpenGL::InvalidHandle;
     }
 }
@@ -63,6 +65,7 @@ bool Buffer::Create(const BufferInfo& info)
     SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
     
     glGenBuffers(1, &m_handle);
+    OpenGL::CheckErrors();
 
     if(m_handle == OpenGL::InvalidHandle)
     {
@@ -77,7 +80,8 @@ bool Buffer::Create(const BufferInfo& info)
     {
         glBindBuffer(m_type, m_handle);
         glBufferData(m_type, bufferSize, info.data, info.usage);
-        glBindBuffer(m_type, m_context->GetState().GetBindBuffer(m_type));
+        glBindBuffer(m_type, m_renderContext->GetState().GetBufferBinding(m_type));
+        OpenGL::CheckErrors();
     }
 
     // Save buffer parameters.
@@ -102,10 +106,8 @@ void Buffer::Update(const void* data, int elementCount)
     // Upload new buffer data.
     glBindBuffer(m_type, m_handle);
     glBufferData(m_type, m_elementSize * elementCount, data, m_usage);
-    glBindBuffer(m_type, m_context->GetState().GetBindBuffer(m_type));
-
-    GLenum error = glGetError();
-    ASSERT(error == GL_NO_ERROR, "Failed to upload buffer data!");
+    glBindBuffer(m_type, m_renderContext->GetState().GetBufferBinding(m_type));
+    OpenGL::CheckErrors();
 }
 
 GLenum Buffer::GetType() const
@@ -157,8 +159,8 @@ bool Buffer::IsInstanced() const
     Vertex Buffer
 */
 
-VertexBuffer::VertexBuffer(RenderContext* context) :
-    Buffer(context, GL_ARRAY_BUFFER)
+VertexBuffer::VertexBuffer(RenderContext* renderContext) :
+    Buffer(renderContext, GL_ARRAY_BUFFER)
 {
 }
 
@@ -171,8 +173,8 @@ const char* VertexBuffer::GetName() const
     Index Buffer
 */
 
-IndexBuffer::IndexBuffer(RenderContext* context) :
-    Buffer(context, GL_ELEMENT_ARRAY_BUFFER)
+IndexBuffer::IndexBuffer(RenderContext* renderContext) :
+    Buffer(renderContext, GL_ELEMENT_ARRAY_BUFFER)
 {
 }
 
@@ -202,8 +204,8 @@ GLenum IndexBuffer::GetElementType() const
     Instance Buffer
 */
 
-InstanceBuffer::InstanceBuffer(RenderContext* context) :
-    Buffer(context, GL_ARRAY_BUFFER)
+InstanceBuffer::InstanceBuffer(RenderContext* renderContext) :
+    Buffer(renderContext, GL_ARRAY_BUFFER)
 {
 }
 

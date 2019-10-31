@@ -2,6 +2,47 @@
 
 /*
     Graphics Screen Space
+    
+    Creates a screen space transform with an orthogonal projection that can be used to
+    create a self maintaining drawing space that is independant of the target resolution.
+
+    WTTTTSSSSSSSSSSSSSTTTTT
+    T    S           S    T
+    T    S           S    T
+    T    S     C     S    T
+    T    S           S    T
+    T    S           S    T
+    GTTTTOSSSSSSSSSSSSTTTTT
+
+    S - Source Size
+    T - Target Size
+    C - Source Center
+    O - Source Origin
+    W - Window Origin
+    G - OpenGL Origin
+    
+    Requires source size (i.e. world coordinates) and target size (e.g. viewport or window)
+    to be specified. The source will be always enclosed inside the target so it remains fully
+    visible. It will also be scaled if needed to maintain largest possible size and aspect ratio
+    if the enclosing target becomes smaller or larger.
+    
+    void ExampleGraphicsScreenSpace()
+    {
+        // Create a screen space instance.
+        Graphics::ScreenSpace screenSpace;
+        screenSpace.SetSourceSize(1024.0f, 576.0f);
+        
+        // Main rendering loop.
+        while(true)
+        {
+            // Update target size.
+            m_screenSpace.SetTargetSize(windowWidth, windowHeight);
+
+            // Setup a viewport and camera transform.
+            glViewport(0, 0, windowWidth, windowHeight);
+            glm::mat4 transform = screenSpace.GetTransform();
+        }
+    }
 */
 
 namespace Graphics
