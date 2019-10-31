@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Graphics/RenderState.hpp"
+
 /*
     Graphics Sampler
     
     Encapsulates an OpenGL sampler object that defines texture sampling and filtering properties.
     
-    void ExampleGraphicsSampler()
+    void ExampleGraphicsSampler(Graphics::RenderContext* renderContext)
     {
         // Describe sampler info.
         Graphics::SamplerInfo samplerInfo;
@@ -13,7 +15,7 @@
         samplerInfo.textureWrapR = GL_REPEAT;
 
         // Create a sampler instance.
-        Graphics::Sampler sampler;
+        Graphics::Sampler sampler(renderContext);
         sampler.Create(samplerInfo);
         
         // Modify parameters after creation.
@@ -28,6 +30,9 @@
 
 namespace Graphics
 {
+    // Forward declarations.
+    class RenderContext;
+
     // Sampler info structure.
     struct SamplerInfo
     {
@@ -51,7 +56,7 @@ namespace Graphics
     class Sampler
     {
     public:
-        Sampler();
+        Sampler(RenderContext* renderContext);
         ~Sampler();
 
         // Initializes the sampler object.
@@ -72,6 +77,9 @@ namespace Graphics
         void DestroyHandle();
 
     private:
+        // Render context.
+        RenderContext* m_renderContext;
+
         // Sampler handle.
         GLuint m_handle;
     };
@@ -80,21 +88,24 @@ namespace Graphics
     template<>
     inline void Sampler::SetParameter<GLint>(GLenum parameter, const GLint& value)
     {
-        VERIFY(m_handle, "Sampler handle has not been created!");
+        VERIFY(m_handle != OpenGL::InvalidHandle, "Sampler handle has not been created!");
         glSamplerParameteri(m_handle, parameter, value);
+        OpenGL::CheckErrors();
     }
 
     template<>
     inline void Sampler::SetParameter<GLfloat>(GLenum parameter, const GLfloat& value)
     {
-        VERIFY(m_handle, "Sampler handle has not been created!");
+        VERIFY(m_handle != OpenGL::InvalidHandle, "Sampler handle has not been created!");
         glSamplerParameterf(m_handle, parameter, value);
+        OpenGL::CheckErrors();
     }
 
     template<>
     inline void Sampler::SetParameter<glm::vec4>(GLenum parameter, const glm::vec4& value)
     {
-        VERIFY(m_handle, "Sampler handle has not been created!");
+        VERIFY(m_handle != OpenGL::InvalidHandle, "Sampler handle has not been created!");
         glSamplerParameterfv(m_handle, parameter, glm::value_ptr(value));
+        OpenGL::CheckErrors();
     }
 }
