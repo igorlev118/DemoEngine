@@ -1,14 +1,10 @@
 #include "Precompiled.hpp"
 #include "Graphics/Shader.hpp"
+#include "Graphics/RenderContext.hpp"
 using namespace Graphics;
 
 namespace
 {
-    // Constant definitions.
-    const GLuint InvalidHandle = 0;
-    const GLint  InvalidAttribute = -1;
-    const GLint  InvalidUniform = -1;
-
     // Available shader types.
     struct ShaderType
     {
@@ -26,8 +22,9 @@ namespace
     };
 }
 
-Shader::Shader() :
-    m_handle(InvalidHandle)
+Graphics::Shader::Shader(RenderContext* renderContext) :
+    m_renderContext(renderContext),
+    m_handle(OpenGL::InvalidHandle)
 {
 }
 
@@ -39,10 +36,12 @@ Shader::~Shader()
 void Shader::DestroyHandle()
 {
     // Release the program handle.
-    if(m_handle != InvalidHandle)
+    if(m_handle != OpenGL::InvalidHandle)
     {
         glDeleteProgram(m_handle);
-        m_handle = InvalidHandle;
+        OpenGL::CheckErrors();
+
+        m_handle = OpenGL::InvalidHandle;
     }
 }
 
@@ -77,7 +76,7 @@ bool Shader::Compile(std::string shaderCode)
     LOG() << "Compiling shader code..." << LOG_INDENT();
 
     // Check if handle has been already created.
-    VERIFY(m_handle == InvalidHandle, "Shader instance has been already initialized!");
+    VERIFY(m_handle == OpenGL::InvalidHandle, "Shader instance has been already initialized!");
 
     // Validate arguments.
     if(shaderCode.empty())
@@ -96,6 +95,7 @@ bool Shader::Compile(std::string shaderCode)
     {
         for(int i = 0; i < ShaderTypeCount; ++i)
         {
+            // Delete shaders after we link them into a program.
             glDeleteShader(shaderObjects[i]);
         }
     }
@@ -128,8 +128,9 @@ bool Shader::Compile(std::string shaderCode)
 
             // Create a shader object.
             shaderObject = glCreateShader(shaderType.type);
+            OpenGL::CheckErrors();
 
-            if(shaderObject == InvalidHandle)
+            if(shaderObject == OpenGL::InvalidHandle)
             {
                 LOG_ERROR() << "Could not create a shader object!";
                 return false;
@@ -152,12 +153,15 @@ bool Shader::Compile(std::string shaderCode)
                 Utility::StaticArraySize(shaderCodeSegments),
                 (const GLchar**)&shaderCodeSegments, nullptr
             );
+            OpenGL::CheckErrors();
 
             glCompileShader(shaderObject);
+            OpenGL::CheckErrors();
 
             // Check compiling results.
             GLint compileStatus = 0;
             glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &compileStatus);
+            OpenGL::CheckErrors();
 
             if(compileStatus == GL_FALSE)
             {
@@ -165,11 +169,13 @@ bool Shader::Compile(std::string shaderCode)
 
                 GLint errorLength = 0;
                 glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &errorLength);
+                OpenGL::CheckErrors();
 
                 if(errorLength != 0)
                 {
                     std::vector<char> errorText(errorLength);
                     glGetShaderInfoLog(shaderObject, errorLength, &errorLength, &errorText[0]);
+                    OpenGL::CheckErrors();
 
                     LOG_ERROR() << "Shader compile errors: \"" << errorText.data() << "\"";
                 }
@@ -192,8 +198,9 @@ bool Shader::Compile(std::string shaderCode)
     SCOPE_GUARD_IF(!initialized, this->DestroyHandle());
 
     m_handle = glCreateProgram();
+    OpenGL::CheckErrors();
 
-    if(m_handle == InvalidHandle)
+    if(m_handle == OpenGL::InvalidHandle)
     {
         LOG_ERROR() << "Could not create a shader program!";
         return false;
@@ -204,29 +211,33 @@ bool Shader::Compile(std::string shaderCode)
     {
         GLuint& shaderObject = shaderObjects[i];
 
-        if(shaderObject != InvalidHandle)
+        if(shaderObject != OpenGL::InvalidHandle)
         {
             glAttachShader(m_handle, shaderObject);
+            OpenGL::CheckErrors();
         }
     }
 
     // Link attached shader objects.
     glLinkProgram(m_handle);
+    OpenGL::CheckErrors();
 
     // Detach already linked shader objects.
     for(unsigned int i = 0; i < ShaderTypeCount; ++i)
     {
         GLuint& shaderObject = shaderObjects[i];
 
-        if(shaderObject != InvalidHandle)
+        if(shaderObject != OpenGL::InvalidHandle)
         {
             glDetachShader(m_handle, shaderObject);
+            OpenGL::CheckErrors();
         }
     }
 
     // Check linking results.
     GLint linkStatus = 0;
     glGetProgramiv(m_handle, GL_LINK_STATUS, &linkStatus);
+    OpenGL::CheckErrors();
 
     if(linkStatus == GL_FALSE)
     {
@@ -234,11 +245,13 @@ bool Shader::Compile(std::string shaderCode)
 
         GLint errorLength = 0;
         glGetProgramiv(m_handle, GL_INFO_LOG_LENGTH, &errorLength);
+        OpenGL::CheckErrors();
 
         if(errorLength != 0)
         {
             std::vector<char> errorText(errorLength);
             glGetProgramInfoLog(m_handle, errorLength, &errorLength, &errorText[0]);
+            OpenGL::CheckErrors();
 
             LOG_ERROR() << "Shader link errors: \"" << errorText.data() << "\"";
         }
@@ -256,7 +269,7 @@ bool Shader::Compile(std::string shaderCode)
 
 GLint Shader::GetAttribute(std::string name) const
 {
-    ASSERT(m_handle != InvalidHandle, "Shader program handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Shader program handle has not been created!");
     ASSERT(!name.empty(), "Attribute name cannot be empty!");
 
     GLint location = glGetAttribLocation(m_handle, name.c_str());
@@ -266,7 +279,7 @@ GLint Shader::GetAttribute(std::string name) const
 
 GLint Shader::GetUniform(std::string name) const
 {
-    ASSERT(m_handle != InvalidHandle, "Shader program handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Shader program handle has not been created!");
     ASSERT(!name.empty(), "Uniform name cannot be empty!");
 
     GLint location = glGetUniformLocation(m_handle, name.c_str());
@@ -276,12 +289,12 @@ GLint Shader::GetUniform(std::string name) const
 
 GLuint Shader::GetHandle() const
 {
-    ASSERT(m_handle != InvalidHandle, "Shader program handle has not been created!");
+    ASSERT(m_handle != OpenGL::InvalidHandle, "Shader program handle has not been created!");
 
     return m_handle;
 }
 
 bool Shader::IsValid() const
 {
-    return m_handle != InvalidHandle;
+    return m_handle != OpenGL::InvalidHandle;
 }
