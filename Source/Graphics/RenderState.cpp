@@ -64,6 +64,10 @@ RenderState::RenderState()
         OpenGL::CheckErrors();
     }
 
+    // glUseProgram
+    glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)&m_currentProgram);
+    OpenGL::CheckErrors();
+
     // glViewport
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, &viewport[0]);
@@ -247,6 +251,25 @@ GLint RenderState::GetPixelStore(GLenum pname) const
     return m_pixelStore[0];
 }
 
+void RenderState::UseProgram(GLuint program)
+{
+    // Check if state changed.
+    if(GetCurrentProgram() == program)
+        return;
+
+    // Call OpenGL function.
+    glUseProgram(program);
+    OpenGL::CheckErrors();
+
+    // Save changed state.
+    m_currentProgram = program;
+}
+
+GLuint RenderState::GetCurrentProgram() const
+{
+    return m_currentProgram;
+}
+
 void RenderState::Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     // Check if state changed.
@@ -310,3 +333,4 @@ void RenderState::Clear(GLbitfield mask)
     glClear(mask);
     OpenGL::CheckErrors();
 }
+
