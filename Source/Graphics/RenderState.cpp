@@ -23,8 +23,50 @@ bool Graphics::OpenGL::CheckErrors()
     return errorFound != true;
 }
 
-RenderState::RenderState()
+RenderState::RenderState() :
+    m_initialized(false)
 {
+    // glBindVertexArray
+    m_vertexArrayBinding = OpenGL::InvalidHandle;
+
+    // glBindBuffer
+    for(GLuint& bufferBinding : m_bufferBindings)
+    {
+        bufferBinding = OpenGL::InvalidHandle;
+    }
+
+    // glActiveTexture
+    m_activeTexture = GL_NONE;
+
+    // glBindTexture
+    for(GLuint& textureBinding : m_textureBindings)
+    {
+        textureBinding = OpenGL::InvalidHandle;
+    }
+
+    // glPixelStore
+    for(GLint& pixelStore : m_pixelStore)
+    {
+        pixelStore = 0;
+    }
+
+    // glUseProgram
+    m_currentProgram = OpenGL::InvalidHandle;
+
+    // glViewport
+    m_viewport = { 0, 0, 0, 0 };
+
+    // glClearDeapth
+    m_clearDepth = 0.0;
+
+    // glClearColor
+    m_clearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+}
+
+bool Graphics::RenderState::Initialize()
+{
+    LOG() << "Initializing a rendering state..." << LOG_INDENT();
+
     // glBindVertexArray
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&m_vertexArrayBinding);
     OpenGL::CheckErrors();
@@ -90,10 +132,76 @@ RenderState::RenderState()
     OpenGL::CheckErrors();
 
     m_clearColor = std::tie(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+
+    // Success!
+    LOG_INFO() << "Success!";
+
+    return m_initialized = true;
+}
+
+void RenderState::Apply(RenderState& other)
+{
+    ASSERT(m_initialized, "Render state is not initialized!");
+
+    // glBindVertexArray
+    BindVertexArray(other.m_vertexArrayBinding);
+
+    // glBindBuffer
+    for(int i = 0; i < OpenGL::BufferBindingTargetCount; ++i)
+    {
+        BindBuffer(std::get<0>(OpenGL::BufferBindingTargets[i]), other.m_bufferBindings[i]);
+    }
+
+    // glActiveTexture
+    ActiveTexture(other.m_activeTexture);
+
+    // glBindTexture
+    for(int i = 0; i < OpenGL::TextureBindingTargetCount; ++i)
+    {
+        BindTexture(std::get<0>(OpenGL::TextureBindingTargets[i]), other.m_textureBindings[i]);
+    }
+
+    // glBindSampler
+    ASSERT(m_samplerBindings.size() == other.m_samplerBindings.size(), "Different sampler binding array sizes between states!");
+
+    for(size_t i = 0; i < m_samplerBindings.size(); ++i)
+    {
+        BindSampler(i, other.m_samplerBindings[i]);
+    }
+
+    // glPixelStore
+    for(int i = 0; i < OpenGL::PixelStoreParameterCount; ++i)
+    {
+        PixelStore(OpenGL::PixelStoreParameters[i], other.m_pixelStore[i]);
+    }
+
+    // glUseProgram
+    UseProgram(other.m_currentProgram);
+
+    // glViewport
+    Viewport(
+        std::get<0>(other.m_viewport),
+        std::get<1>(other.m_viewport),
+        std::get<2>(other.m_viewport),
+        std::get<3>(other.m_viewport)
+    );
+
+    // glClearDepth
+    ClearDepth(other.m_clearDepth);
+
+    // glClearColor
+    ClearColor(
+        std::get<0>(other.m_clearColor),
+        std::get<1>(other.m_clearColor),
+        std::get<2>(other.m_clearColor),
+        std::get<3>(other.m_clearColor)
+    );
 }
 
 void RenderState::BindVertexArray(GLuint array)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+
     // Check if states match.
     if(GetVertexArrayBinding() == array)
         return;
@@ -108,11 +216,14 @@ void RenderState::BindVertexArray(GLuint array)
 
 GLuint RenderState::GetVertexArrayBinding() const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+
     return m_vertexArrayBinding;
 }
 
 void RenderState::BindBuffer(GLenum target, GLuint buffer)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(target != OpenGL::InvalidEnum, "Unsupported buffer binding target!");
 
     // Check if states match.
@@ -133,6 +244,7 @@ void RenderState::BindBuffer(GLenum target, GLuint buffer)
 
 GLuint RenderState::GetBufferBinding(GLenum target) const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(target != OpenGL::InvalidEnum, "Unsupported buffer binding target!");
 
     for(int i = 0; i < OpenGL::BufferBindingTargetCount; ++i)
@@ -146,6 +258,7 @@ GLuint RenderState::GetBufferBinding(GLenum target) const
 
 void RenderState::ActiveTexture(GLenum texture)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(texture >= GL_TEXTURE0 && texture < GL_TEXTURE0 + m_samplerBindings.size(), "Unsupported texture unit!");
 
     // Check if states match.
@@ -162,11 +275,14 @@ void RenderState::ActiveTexture(GLenum texture)
 
 GLenum RenderState::GetActiveTexture() const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+
     return m_activeTexture;
 }
 
 void RenderState::BindTexture(GLenum target, GLuint texture)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(target != OpenGL::InvalidEnum, "Unsupported texture binding target!");
 
     // Check if states match.
@@ -187,9 +303,10 @@ void RenderState::BindTexture(GLenum target, GLuint texture)
 
 GLuint RenderState::GetTextureBinding(GLenum target) const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(target != OpenGL::InvalidEnum, "Unsupported texture binding target!");
 
-    for(int i = 1; i < OpenGL::TextureBindingTargetCount; ++i)
+    for(int i = 0; i < OpenGL::TextureBindingTargetCount; ++i)
     {
         if(std::get<0>(OpenGL::TextureBindingTargets[i]) == target)
             return m_textureBindings[i];
@@ -200,6 +317,7 @@ GLuint RenderState::GetTextureBinding(GLenum target) const
 
 void RenderState::BindSampler(GLuint unit, GLuint sampler)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(!m_samplerBindings.empty(), "Sampler bindings array is empty!");
     VERIFY(unit >= 0 && unit < m_samplerBindings.size(), "Unsupported texture unit!");
 
@@ -217,6 +335,7 @@ void RenderState::BindSampler(GLuint unit, GLuint sampler)
 
 GLuint RenderState::GetSamplerBinding(GLuint unit) const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(!m_samplerBindings.empty(), "Sampler bindings array is empty!");
     VERIFY(unit >= 0 && unit < m_samplerBindings.size(), "Unsupported texture unit!");
 
@@ -225,6 +344,7 @@ GLuint RenderState::GetSamplerBinding(GLuint unit) const
 
 void RenderState::PixelStore(GLenum pname, GLint param)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(pname != OpenGL::InvalidEnum, "Unsupported pixel store parameter!");
 
     // Check if states match.
@@ -236,7 +356,7 @@ void RenderState::PixelStore(GLenum pname, GLint param)
     OpenGL::CheckErrors();
 
     // Save changed state.
-    for(int i = 1; i < OpenGL::PixelStoreParameterCount; ++i)
+    for(int i = 0; i < OpenGL::PixelStoreParameterCount; ++i)
     {
         if(OpenGL::PixelStoreParameters[i] == pname)
             m_pixelStore[i] = param;
@@ -245,19 +365,22 @@ void RenderState::PixelStore(GLenum pname, GLint param)
 
 GLint RenderState::GetPixelStore(GLenum pname) const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
     ASSERT(pname != OpenGL::InvalidEnum, "Unsupported pixel store parameter!");
 
-    for(int i = 1; i < OpenGL::PixelStoreParameterCount; ++i)
+    for(int i = 0; i < OpenGL::PixelStoreParameterCount; ++i)
     {
         if(OpenGL::PixelStoreParameters[i] == pname)
             return m_pixelStore[i];
     }
 
-    return m_pixelStore[0];
+    return 0;
 }
 
 void RenderState::UseProgram(GLuint program)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+    
     // Check if state changed.
     if(GetCurrentProgram() == program)
         return;
@@ -272,11 +395,15 @@ void RenderState::UseProgram(GLuint program)
 
 GLuint RenderState::GetCurrentProgram() const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+
     return m_currentProgram;
 }
 
 void RenderState::Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+
     // Check if state changed.
     if(GetViewport() == std::tie(x, y, width, height))
         return;
@@ -291,11 +418,15 @@ void RenderState::Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 
 std::tuple<GLint, GLint, GLsizei, GLsizei> RenderState::GetViewport() const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+
     return m_viewport;
 }
 
 void RenderState::ClearDepth(GLdouble depth)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+    
     // Check if state changed.
     if(GetClearDepth() == depth)
         return;
@@ -310,11 +441,15 @@ void RenderState::ClearDepth(GLdouble depth)
 
 GLdouble RenderState::GetClearDepth() const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+    
     return m_clearDepth;
 }
 
 void RenderState::ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+    
     // Check if state changed.
     if(GetClearColor() == std::tie(red, green, blue, alpha))
         return;
@@ -329,11 +464,15 @@ void RenderState::ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat a
 
 std::tuple<GLfloat, GLfloat, GLfloat, GLfloat> RenderState::GetClearColor() const
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+    
     return m_clearColor;
 }
 
 void RenderState::Clear(GLbitfield mask)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+    
     // Call OpenGL function.
     glClear(mask);
     OpenGL::CheckErrors();
@@ -341,6 +480,8 @@ void RenderState::Clear(GLbitfield mask)
 
 void RenderState::DrawArrays(GLenum mode, GLint first, GLsizei count)
 {
+    ASSERT(m_initialized, "Render state is not initialized!");
+    
     // Call OpenGL function.
     glDrawArrays(mode, first, count);
     OpenGL::CheckErrors();
