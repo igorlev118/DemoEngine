@@ -9,6 +9,7 @@
 #include <Graphics/Texture.hpp>
 #include <Graphics/Sampler.hpp>
 #include <Graphics/Shader.hpp>
+#include <Game/EntitySystem.hpp>
 #include <Editor/Editor.hpp>
 
 int main()
@@ -113,6 +114,9 @@ int main()
     Graphics::ScreenSpace screenSpace;
     screenSpace.SetSourceSize(2.0f, 2.0f);
 
+    // Create the entity system.
+    Game::EntitySystem entitySystem;
+
     // Initialize the editor.
     Engine::Editor editor(&renderContext);
     if(!editor.Initialize(&window))
@@ -129,6 +133,9 @@ int main()
 
         // Process window events.
         window.ProcessEvents();
+
+        // Process entity commands.
+        entitySystem.ProcessCommands();
 
         // Update the editor interface.
         editor.Update(deltaTime);
