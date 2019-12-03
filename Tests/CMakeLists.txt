@@ -19,4 +19,3 @@ endfunction(create_test)
 create_test("Utilities")
 create_test("ScopeGuard")
 create_test("Events")
-
