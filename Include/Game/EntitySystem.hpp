@@ -96,6 +96,8 @@ namespace Game
         // Handle entry structure.
         struct HandleEntry
         {
+            HandleEntry(EntityHandle::ValueType identifier);
+
             EntityHandle handle;
             HandleFlags::Type flags;
             EntityHandle::ValueType nextFree;
@@ -121,7 +123,7 @@ namespace Game
         };
 
         // Type declarations.
-        typedef std::deque<HandleEntry> HandleList;
+        typedef std::vector<HandleEntry> HandleList;
         typedef std::queue<EntityCommand> CommandList;
 
     private:
