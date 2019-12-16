@@ -21,7 +21,7 @@ set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/Include")
 set(SOURCE_DIR "${PROJECT_SOURCE_DIR}/Source")
 set(PRECOMPILED_HEADER "Precompiled")
 
-set(TARGET_FILES
+set(SOURCE_FILES
     "Include/Engine.hpp"
     "Source/${PRECOMPILED_HEADER}.hpp"
     "Source/${PRECOMPILED_HEADER}.cpp"
@@ -87,17 +87,17 @@ set(TARGET_FILES
     "Source/Game/ComponentSystem.cpp"
 )
 
-append_directory_path("${PROJECT_SOURCE_DIR}" "TARGET_FILES")
+append_directory_path("${PROJECT_SOURCE_DIR}" "SOURCE_FILES")
 
 # Keep folder structure of include and source files in Visual Studio.
-source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${TARGET_FILES})
+source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCE_FILES})
 
 #
 # Target
 #
 
 # Declare a statically linked library target.
-add_library("Engine" STATIC ${TARGET_FILES})
+add_library("Engine" STATIC ${SOURCE_FILES})
 include_directories("./" ${INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 #
@@ -140,9 +140,6 @@ source_group("Source\\Config" FILES "${CMAKE_CURRENT_BINARY_DIR}/Config/BuildInf
 
 # Microsoft Visual Studio
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    # Restore default main() entry instead of WinMain().
-    set_property(TARGET "Engine" APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:mainCRTStartup ")
-
     # Disable Standard C++ Library warnings.
     set_property(TARGET "Engine" APPEND_STRING PROPERTY COMPILE_DEFINITIONS "_CRT_SECURE_NO_WARNINGS")
     set_property(TARGET "Engine" APPEND_STRING PROPERTY COMPILE_DEFINITIONS "_SCL_SECURE_NO_WARNINGS")

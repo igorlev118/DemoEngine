@@ -37,6 +37,7 @@ namespace Common
         friend ReceiverInvoker<ReturnType(Arguments...)>;
 
     public:
+        // Constructor.
         Receiver() :
             m_dispatcher(nullptr),
             m_previous(nullptr),
@@ -44,11 +45,17 @@ namespace Common
         {
         }
 
+        // Destructor.
         virtual ~Receiver()
         {
             // Unsubscribe from the dispatcher.
             this->Unsubscribe();
         }
+
+        // Disallow copying and moving as receivers contain
+        // intrusive links and reference subscribed dispatcher.
+        Receiver(Receiver&&) = delete;
+        Receiver& operator=(Receiver&&) = delete;
 
         // Subscribes to a dispatcher.
         bool Subscribe(DispatcherBase<ReturnType(Arguments...)>& dispatcher, bool unsubscribeReceiver = true)
