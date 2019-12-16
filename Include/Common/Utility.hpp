@@ -32,7 +32,8 @@ namespace Utility
     template<typename Type>
     void ClearContainer(Type& container)
     {
-        container.swap(Type());
+        Type temp;
+        container.swap(temp);
     }
 
     // Gets the directory from a file path.

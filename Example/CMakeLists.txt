@@ -1,5 +1,5 @@
 # Specify minimum CMake version required.
-cmake_minimum_required(VERSION 3.11.2)
+cmake_minimum_required(VERSION 3.10)
 
 #
 # Config
@@ -47,10 +47,8 @@ set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT
 # Tests
 #
 
-# Enable testing.
-if(${ENABLE_TESTS})
-	enable_testing()
-endif()
+# Enable tests.
+enable_testing()
 
 #
 # External

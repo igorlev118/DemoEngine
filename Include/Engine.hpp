@@ -3,6 +3,7 @@
 // Standard
 #include <string>
 #include <vector>
+#include <memory>
 
 // Windows
 #ifdef WIN32
@@ -20,10 +21,10 @@
 #include <glm/gtx/norm.hpp>
 
 // GLEW
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 // GLFW
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 // ImGUI
 #include <imgui.h>
