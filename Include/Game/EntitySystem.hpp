@@ -100,7 +100,6 @@ namespace Game
 
             EntityHandle handle;
             HandleFlags::Type flags;
-            EntityHandle::ValueType nextFree;
         };
 
         // Entity command types.
@@ -124,6 +123,7 @@ namespace Game
 
         // Type declarations.
         typedef std::vector<HandleEntry> HandleList;
+        typedef std::queue<HandleEntry*> FreeList;
         typedef std::queue<EntityCommand> CommandList;
 
     private:
@@ -138,10 +138,9 @@ namespace Game
         CommandList m_commands;
 
         // List of entity handles.
-        HandleList m_handles;
+        HandleList m_handleEntries;
 
-        // List of free handle identifiers.
-        EntityHandle::ValueType m_freeListDequeue;
-        EntityHandle::ValueType m_freeListEnqueue;
+        // List of free entity handles.
+        FreeList m_freeHandles;
     };
 }
