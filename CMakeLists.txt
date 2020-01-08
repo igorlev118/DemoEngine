@@ -1,4 +1,3 @@
-
 # CMake version that was used to write this configuration file.
 # This is important to set in order to establish policies for many commands.
 cmake_minimum_required(VERSION 3.10)
@@ -33,8 +32,6 @@ set(SOURCE_FILES
     "Include/Events/Collector.hpp"
     "Include/Events/Dispatcher.hpp"
     "Include/Events/Receiver.hpp"
-
-    "Include/Memory/SlotArray.hpp"
 
     "Include/Logger/Logger.hpp"
     "Source/Logger/Logger.cpp"
@@ -74,6 +71,7 @@ set(SOURCE_FILES
     "Include/Editor/Editor.hpp"
     "Source/Editor/Editor.cpp"
 
+    "Include/Game/EntityHandle.hpp"
     "Include/Game/EntitySystem.hpp"
     "Source/Game/EntitySystem.cpp"
     "Include/Game/Component.hpp"
