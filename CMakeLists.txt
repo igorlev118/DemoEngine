@@ -1,3 +1,4 @@
+
 # CMake version that was used to write this configuration file.
 # This is important to set in order to establish policies for many commands.
 cmake_minimum_required(VERSION 3.10)
@@ -32,6 +33,8 @@ set(SOURCE_FILES
     "Include/Events/Collector.hpp"
     "Include/Events/Dispatcher.hpp"
     "Include/Events/Receiver.hpp"
+
+    "Include/Memory/SlotArray.hpp"
 
     "Include/Logger/Logger.hpp"
     "Source/Logger/Logger.cpp"
@@ -71,7 +74,6 @@ set(SOURCE_FILES
     "Include/Editor/Editor.hpp"
     "Source/Editor/Editor.cpp"
 
-    "Include/Game/EntityHandle.hpp"
     "Include/Game/EntitySystem.hpp"
     "Source/Game/EntitySystem.cpp"
     "Include/Game/Component.hpp"
@@ -150,11 +152,11 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     
     # Use precompiled header for quicker compilation of static headers.
     set_source_files_properties(${SOURCE_FILES} PROPERTIES
-        COMPILE_FLAGS "/Yu\"Precompiled.hpp\" /Fp\"${CMAKE_CURRENT_BINARY_DIR}/Source/Precompiled-${CMAKE_BUILD_TYPE}.pch\""
+        COMPILE_FLAGS "/Yu\"Precompiled.hpp\" /Fp\"${CMAKE_CURRENT_BINARY_DIR}/Source/Precompiled-$(Configuration).pch\""
     )
 
     set_source_files_properties("Source/Precompiled.cpp" PROPERTIES
-        COMPILE_FLAGS "/Yc\"Precompiled.hpp\" /Fp\"${CMAKE_CURRENT_BINARY_DIR}/Source/Precompiled-${CMAKE_BUILD_TYPE}.pch\""
+        COMPILE_FLAGS "/Yc\"Precompiled.hpp\" /Fp\"${CMAKE_CURRENT_BINARY_DIR}/Source/Precompiled-$(Configuration).pch\""
     )
 endif()
 
