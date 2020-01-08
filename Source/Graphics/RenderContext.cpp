@@ -15,7 +15,7 @@ RenderContext::~RenderContext()
 
 bool RenderContext::Initialize(System::Window* window)
 {
-    LOG() << "Initializing a rendering context..." << LOG_INDENT();
+    LOG() << "Initializing rendering context..." << LOG_INDENT();
 
     // Make sure that the instance is not initialized.
     VERIFY(!m_initialized, "Render context has already been initialized!");
@@ -31,8 +31,6 @@ bool RenderContext::Initialize(System::Window* window)
     m_window = window;
 
     // Success!
-    LOG_INFO() << "Success!";
-
     return m_initialized = true;
 }
 

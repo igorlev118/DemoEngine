@@ -116,7 +116,7 @@ bool Sampler::Create(const SamplerInfo& info)
 
     if(m_handle == OpenGL::InvalidHandle)
     {
-        LOG_ERROR() << "Could not create a sampler!";
+        LOG_ERROR() << "Sampler could not be created!";
         return false;
     }
 
@@ -182,8 +182,6 @@ bool Sampler::Create(const SamplerInfo& info)
     }
 
     // Success!
-    LOG_INFO() << "Success!";
-
     return initialized = true;
 }
 

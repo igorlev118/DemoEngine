@@ -16,7 +16,7 @@ ComponentSystem::~ComponentSystem()
 
 bool ComponentSystem::Initialize(EntitySystem& entitySystem)
 {   
-    LOG() << "Initializing the component system..." << LOG_INDENT();
+    LOG() << "Initializing component system..." << LOG_INDENT();
 
     // Make sure we are not initializing twice.
     ASSERT(!m_initialized, "Component system instance has already been initialized!");
@@ -29,8 +29,6 @@ bool ComponentSystem::Initialize(EntitySystem& entitySystem)
     }
 
     // Success!
-    LOG_INFO() << "Success!";
-
     return m_initialized = true;
 }
 

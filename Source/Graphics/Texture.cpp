@@ -44,7 +44,7 @@ bool Texture::Load(std::string filePath)
     LOG() << "Loading texture from \"" << filePath << "\" file..." << LOG_INDENT();
 
     // Check if handle has been already created.
-    VERIFY(m_handle == OpenGL::InvalidHandle, "Texture instance has been already initialized!");
+    VERIFY(m_handle == OpenGL::InvalidHandle, "Texture instance has already been initialized!");
 
     // Validate arguments.
     if(filePath.empty())
@@ -54,11 +54,11 @@ bool Texture::Load(std::string filePath)
     }
 
     // Open the file stream.
-    std::ifstream file(filePath, std::ios::binary);
+    std::ifstream file(Build::GetWorkingDir() + filePath, std::ios::binary);
 
     if(!file.is_open())
     {
-        LOG_ERROR() << "Could not open the file!";
+        LOG_ERROR() << "File could not be opened!";
         return false;
     }
 
@@ -70,7 +70,7 @@ bool Texture::Load(std::string filePath)
 
     if(png_sig_cmp(png_sig, 0, png_sig_size) != 0)
     {
-        LOG_ERROR() << "Filepath does not contain a valid PNG file!";
+        LOG_ERROR() << "File path does not contain a valid PNG file!";
         return false;
     }
 
@@ -124,7 +124,7 @@ bool Texture::Load(std::string filePath)
     // destructors called if the library jumps back here on an error.
     if(setjmp(png_jmpbuf(png_read_ptr)))
     {
-        LOG_ERROR() << "Error occurred while reading the file!";
+        LOG_ERROR() << "Error(s) occurred while reading the file!";
         return false;
     }
 
@@ -254,8 +254,6 @@ bool Texture::Load(std::string filePath)
     }
 
     // Success!
-    LOG_INFO() << "Success!";
-
     return true;
 }
 
@@ -296,7 +294,7 @@ bool Texture::Create(const TextureInfo& info)
 
     if(m_handle == OpenGL::InvalidHandle)
     {
-        LOG_ERROR() << "Could not create a texture!";
+        LOG_ERROR() << "Texture could not be created!";
         return false;
     }
 
@@ -334,8 +332,6 @@ bool Texture::Create(const TextureInfo& info)
     m_height = info.height;
 
     // Success!
-    LOG_INFO() << "Success!";
-
     return initialized = true;
 }
 

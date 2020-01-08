@@ -49,8 +49,6 @@ bool Platform::Initialize()
     LOG_INFO() << "Using GLFW " << major << "." << minor << "." << revision << " library.";
 
     // Success!
-    LOG_INFO() << "Success!";
-
     return m_initialized = true;
 }
 

@@ -50,24 +50,22 @@ bool Shader::Load(std::string filePath)
     LOG() << "Loading shader from \"" << filePath << "\" file..." << LOG_INDENT();
 
     // Load the shader code from a file.
-    std::string shaderCode = Utility::GetTextFileContent(filePath);
+    std::string shaderCode = Utility::GetTextFileContent(Build::GetWorkingDir() + filePath);
 
     if(shaderCode.empty())
     {
-        LOG_ERROR() << "Could not read the file!";
+        LOG_ERROR() << "File could not be read!";
         return false;
     }
 
     // Call the compile method.
     if(!this->Compile(shaderCode))
     {
-        LOG_ERROR() << "Could not compile the shader code!";
+        LOG_ERROR() << "Shader code could not be compiled!";
         return false;
     }
 
     // Success!
-    LOG_INFO() << "Success!";
-
     return true;
 }
 
@@ -126,13 +124,15 @@ bool Shader::Compile(std::string shaderCode)
         {
             shaderObjectsFound = true;
 
+            LOG_INFO() << "Compiling " << shaderType.name << "...";
+
             // Create a shader object.
             shaderObject = glCreateShader(shaderType.type);
             OpenGL::CheckErrors();
 
             if(shaderObject == OpenGL::InvalidHandle)
             {
-                LOG_ERROR() << "Could not create a shader object!";
+                LOG_ERROR() << "Shader object could not be created!";
                 return false;
             }
 
@@ -165,7 +165,7 @@ bool Shader::Compile(std::string shaderCode)
 
             if(compileStatus == GL_FALSE)
             {
-                LOG_ERROR() << "Could not compile a shader object!";
+                LOG_ERROR() << "Shader object could not be compiled!";
 
                 GLint errorLength = 0;
                 glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &errorLength);
@@ -182,8 +182,6 @@ bool Shader::Compile(std::string shaderCode)
 
                 return false;
             }
-
-            LOG_INFO() << "Compiled a " << shaderType.name << ".";
         }
     }
 
@@ -202,7 +200,7 @@ bool Shader::Compile(std::string shaderCode)
 
     if(m_handle == OpenGL::InvalidHandle)
     {
-        LOG_ERROR() << "Could not create a shader program!";
+        LOG_ERROR() << "Shader program could not be created!";
         return false;
     }
 
@@ -219,6 +217,8 @@ bool Shader::Compile(std::string shaderCode)
     }
 
     // Link attached shader objects.
+    LOG_INFO() << "Linking shader program...";
+
     glLinkProgram(m_handle);
     OpenGL::CheckErrors();
 
@@ -241,7 +241,7 @@ bool Shader::Compile(std::string shaderCode)
 
     if(linkStatus == GL_FALSE)
     {
-        LOG_ERROR()  << "Could not link a shader program!";
+        LOG_ERROR()  << "Shader program could not be linked!";
 
         GLint errorLength = 0;
         glGetProgramiv(m_handle, GL_INFO_LOG_LENGTH, &errorLength);
@@ -259,11 +259,7 @@ bool Shader::Compile(std::string shaderCode)
         return false;
     }
 
-    LOG_INFO() << "Linked a shader program.";
-
     // Success!
-    LOG_INFO() << "Success!";
-
     return initialized = true;
 }
 
