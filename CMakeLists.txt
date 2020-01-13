@@ -78,6 +78,8 @@ set(SOURCE_FILES
     "Include/Game/ComponentPool.hpp"
     "Include/Game/ComponentSystem.hpp"
     "Source/Game/ComponentSystem.cpp"
+    "Include/Game/IdentitySystem.hpp"
+    "Source/Game/IdentitySystem.cpp"
 )
 
 #
