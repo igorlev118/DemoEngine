@@ -50,7 +50,7 @@ bool Shader::Load(std::string filePath)
     LOG() << "Loading shader from \"" << filePath << "\" file..." << LOG_INDENT();
 
     // Load the shader code from a file.
-    std::string shaderCode = Utility::GetTextFileContent(Build::GetWorkingDir() + filePath);
+    std::string shaderCode = Utility::GetTextFileContent(filePath);
 
     if(shaderCode.empty())
     {
