@@ -1,21 +1,60 @@
 # Specify minimum CMake version required.
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
+
+#
+# Config
+#
+
+# Project names.
+set(PROJECT_NAME "GameEngine")
+set(TARGET_NAME "Example")
+
+# Project settings.
+set(ENABLE_TESTS ON)
+
+# Project directories.
+set(WORKING_DIR "Deploy/")
+set(ENGINE_DIR "../")
+
+#
+# Source
+#
+
+# List of source files.
+set(SOURCE_FILES
+    "Source/Main.cpp"
+)
+
+#
+# Target
+#
+
+# Define project and executable target.
+project(${PROJECT_NAME})
+add_executable(${TARGET_NAME} ${SOURCE_FILES})
+
+# Set main build directory as the working directory.
+set_target_properties(${TARGET_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+# Write a file pointing at the working directory.
+get_filename_component(ABSOLUTE_WORKING_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${WORKING_DIR}" ABSOLUTE)
+file(WRITE "${CMAKE_BINARY_DIR}/WorkingDir.txt" "${ABSOLUTE_WORKING_DIR}/")
+
+# Set default project for Visual Studio.
+set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ${TARGET_NAME})
 
 #
 # Tests
 #
 
-# Utility function for defining tests.
-function(create_test testName)
-    add_executable("Test${testName}" "Test${testName}.cpp")
-    set_target_properties("Test${testName}" PROPERTIES FOLDER "Tests")
-    target_link_libraries("Test${testName}" "Engine")
-    include_directories("../Include/")
-    set_target_properties("Test${testName}" PROPERTIES COMPILE_DEFINITIONS TESTS_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}")
-    add_test("${testName}" "Test${testName}")
-endfunction(create_test)
+# Enable tests.
+enable_testing()
 
-# Create unit tests.
-create_test("Utilities")
-create_test("ScopeGuard")
-create_test("Events")
+#
+# External
+#
+
+# Link main dependency to the game engine.
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/${ENGINE_DIR}/" "Engine")
+include_directories("${CMAKE_CURRENT_LIST_DIR}/${ENGINE_DIR}/Include/")
+target_link_libraries(${TARGET_NAME} "Engine")

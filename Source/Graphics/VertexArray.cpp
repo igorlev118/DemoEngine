@@ -246,7 +246,7 @@ bool VertexArray::Create(const VertexArrayInfo& info)
                 attribute.value,
                 attribute.normalize ? GL_TRUE : GL_FALSE,
                 attribute.buffer->GetElementSize(),
-                (void*)currentOffset
+                (void*)(intptr_t)currentOffset
             );
 
             OpenGL::CheckErrors();
