@@ -10,6 +10,8 @@ namespace System
 
 /*
     Graphics Render Context
+
+    Manages the internal state of a rendering system.
 */
 
 namespace Graphics
