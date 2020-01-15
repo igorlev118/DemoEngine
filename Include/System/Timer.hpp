@@ -34,6 +34,14 @@ namespace System
         Timer();
         ~Timer();
 
+        // Disallow copying.
+        Timer(const Timer& other) = delete;
+        Timer& operator=(const Timer& other) = delete;
+
+        // Move constructor and operator.
+        Timer(Timer&& other);
+        Timer& operator=(Timer&& other);
+
         // Resets the timer.
         void Reset();
 
