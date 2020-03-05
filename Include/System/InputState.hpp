@@ -14,7 +14,7 @@
         System::InputState inputState;
 
         // Subscribe the input state to window's input events.
-        inputState.Prepare(window);
+        inputState.PrepareForEvents(window);
     
         // Run the main window loop.
         while(window.IsOpen())
@@ -75,7 +75,7 @@ namespace System
 
         // Prepares the input state for incoming input events.
         // Must be called before window events are processed.
-        void Prepare();
+        void PrepareForEvents();
 
         // Resets the input state.
         void Reset();

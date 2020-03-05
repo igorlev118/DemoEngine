@@ -36,6 +36,10 @@ namespace Engine
         // Initializes the engine instance.
         bool Initialize();
 
+        // Updates the engine before starting a new frame.
+        // Must be called at the beginning of the main loop.
+        bool Update();
+
         // Checks if the engine instance is initialized.
         bool IsInitialized() const;
 
@@ -61,5 +65,8 @@ namespace Engine
     private:
         // Initialization state.
         bool m_initialized;
+
+        // Track first update call.
+        bool m_firstUpdate;
     };
 }
