@@ -3,8 +3,8 @@
 #include "EnginePublic.hpp"
 #include "System/Platform.hpp"
 #include "System/Window.hpp"
-#include "System/InputState.hpp"
 #include "System/Timer.hpp"
+#include "System/InputState.hpp"
 #include "Graphics/RenderContext.hpp"
 #include "Graphics/SpriteRenderer.hpp"
 #include "Game/EntitySystem.hpp"
@@ -47,8 +47,8 @@ namespace Engine
         // Platform systems.
         System::Platform platform;
         System::Window window;
-        System::InputState inputState;
         System::Timer timer;
+        System::InputState inputState;
 
         // Graphics systems.
         Graphics::RenderContext renderContext;
