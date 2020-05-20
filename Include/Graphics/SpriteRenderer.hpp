@@ -8,6 +8,12 @@
 #include "Graphics/Sprite.hpp"
 #include "Graphics/SpriteList.hpp"
 
+// Forward declarations.
+namespace System
+{
+    class ResourceManager;
+}
+
 /*
     Graphics Sprite Renderer
 */
@@ -33,7 +39,7 @@ namespace Graphics
         SpriteRenderer& operator=(SpriteRenderer&& other);
 
         // Initializes the sprite renderer.
-        bool Initialize(RenderContext* renderContext, int spriteBatchSize);
+        bool Initialize(System::ResourceManager* resourceManager, RenderContext* renderContext, int spriteBatchSize);
 
         // Draws a batch of sprites.
         // Very efficient rendering if array of sprites is already sorted to reduces state changes.
@@ -49,7 +55,7 @@ namespace Graphics
         VertexArray m_vertexArray;
         Sampler m_nearestSampler;
         Sampler m_linearSampler;
-        Shader m_shader;
+        std::shared_ptr<Shader> m_shader;
 
         // Sprite batch size.
         std::size_t m_spriteBatchSize;
